@@ -47,7 +47,7 @@
     <script type="module">
         async function work() {
 
-            const response = await fetch('/status');
+            const response = await fetch('/status?cacheBusting=' + new Date());
             const meta = await response.json();
 
             const serviceIsOpen = new Date(meta.serviceEndDate) > new Date()
