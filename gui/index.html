@@ -60,7 +60,7 @@
             else {
                 document.body.classList.remove("service--open");
                 document.body.classList.add("service--closed");
-                document.getElementById("status").innerHTML = "<h3>Service <em>closed</em></h3>";
+                document.getElementById("status").innerHTML = "<h3>Service waiting for you to UNLOCK it</h3>";
             }
             const countdown = document.createElement("count-down");
             countdown.setAttribute("data-expiry-date", meta.serviceEndDate);
