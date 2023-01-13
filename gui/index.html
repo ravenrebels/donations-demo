@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <title>Donations RVN example</title>
+    <style>
+        #qr {
+            padding: 20px;
+            border-radius: 20px;
+            background: white;
+        }
+
+        .service--open {
+
+            background-image: url("https://cdn.pixabay.com/photo/2017/11/04/08/14/tree-2916763_960_720.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .service--closed {
+            background-image: url("https://cdn.pixabay.com/photo/2015/10/15/18/55/cemetery-989920_960_720.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <article data-theme="dark">
+            <h1>Donations as a "paywall" using Ravencoin example</h1>
+            <p id="status">
+            </p>
+            <p>Donate to keep service alive. 1 RVN = one minute open</p>
+            <p>
+            <pre style="font-size: 200%">RCNAqdWHuQ2GeMWNCWKzp6snUxj6sb3jBN</pre>
+            <img id="qr"
+                src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=RCNAqdWHuQ2GeMWNCWKzp6snUxj6sb3jBN" />
+            </p>
+        </article>
+    </main>
+
+    <script type="module">
+        async function work() {
+
+            const response = await fetch('/status');
+            const meta = await response.json();
+
+            const serviceIsOpen = new Date(meta.serviceEndDate) > new Date()
+            if (serviceIsOpen === true) {
+                document.getElementById("status").innerHTML = "<h3>Service is <em>OPEN</em></h3>";
+                document.body.classList.remove("service--closed");
+                document.body.classList.add("service--open");
+
+            }
+            else {
+                document.body.classList.remove("service--open");
+                document.body.classList.add("service--closed");
+                document.getElementById("status").innerHTML = "<h3>Service <em>closed</em></h3>";
+            }
+            const countdown = document.createElement("count-down");
+            countdown.setAttribute("data-expiry-date", meta.serviceEndDate);
+            document.getElementById("status").appendChild(countdown);
+            document.querySelector("article").setAttribute("data-theme", serviceIsOpen ? "light" : "dark");
+
+
+            if (meta.hasMempoolTransaction  === true) {
+             
+                console.log("meta", meta);
+                const mempoolInfo = document.createElement("div");
+                mempoolInfo.innerHTML = "<i>Date might change a bit since we have in mempool transactions</i>";
+                document.getElementById("status").appendChild(mempoolInfo);
+
+            }
+        }
+        work();
+        setInterval(work, 15 * 1000);//Update status every 15 seconds 
+
+        class Countdown extends HTMLElement {
+            connectedCallback() {
+                this.style.display = "block";
+                this.updateTime();
+                setInterval(() => {
+                    this.updateTime();
+                }, 1000);
+            }
+            updateTime() {
+                const e = this.getAttribute("data-expiry-date");
+                const expire = new Date(e);
+                const now = new Date();
+                const secondsLeft = Math.round((expire.getTime() - now.getTime()) / 1000);
+
+                if (secondsLeft > 0) {
+                    this.innerHTML = secondsLeft + " seconds left";
+                }
+            }
+        }
+        customElements.define("count-down", Countdown);
+    </script>
+</body>
+
+</html
