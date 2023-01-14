@@ -20,7 +20,7 @@ app.get("/status", async function (request, response) {
     const transactions = [];
 
 
-    //Almost fake but add transactions from the mempool even if they are not super safe
+    //Add transactions from the mempool even though they are not super safe
     const mempool = await rpc("getrawmempool");
     for (const id of mempool) {
         const trans = await rpc("getrawtransaction", [id, true]);
