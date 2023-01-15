@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
     <title>Donations RVN example</title>
     <style>
@@ -31,17 +31,23 @@
 
 <body>
     <main class="container">
-        <article data-theme="dark">
-            <h1>Donations as a "paywall" using Ravencoin example</h1>
+        <article >
+            <h1>DEMO: Website that integrates Ravencoin</h1>
+
+            <i>Just a demo, if ANYONE sends 1 RVN the monkey starts dancing for one minute</i>
+            <div id="lottie"><lottie-player src="./6863-tenor.json" background="transparent" speed="0"
+                    style="width: 300px; height: 300px;"></lottie-player></div>
+
             <p id="status">
             </p>
-            <i>Just a demo. Send 1 RVN and the app should react and be "open" for one minute</i>
             <p>
-            <pre style="font-size: 200%">RCNAqdWHuQ2GeMWNCWKzp6snUxj6sb3jBN</pre>
+            <pre>RCNAqdWHuQ2GeMWNCWKzp6snUxj6sb3jBN</pre>
             <img id="qr"
                 src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=RCNAqdWHuQ2GeMWNCWKzp6snUxj6sb3jBN" />
             </p>
             <i>Code open source on <a href="https://github.com/ravenrebels/donations-demo">GitHub</a> </i>
+
+        </article>
         </article>
     </main>
 
@@ -50,27 +56,33 @@
 
             const response = await fetch('/status?cacheBusting=' + new Date());
             const meta = await response.json();
-
+            const lottie = document.getElementById("lottie");
             const serviceIsOpen = new Date(meta.serviceEndDate) > new Date()
+            document.getElementById("status").innerHTML = "";
             if (serviceIsOpen === true) {
-                document.getElementById("status").innerHTML = "<h3>Service is <em>OPEN</em></h3>";
-                document.body.classList.remove("service--closed");
-                document.body.classList.add("service--open");
+
+
+                if (document.querySelector("lottie-player").getAttribute("speed") !== "1") {
+                    lottie.innerHTML = `<lottie-player src="./6863-tenor.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;" loop autoplay></lottie-player>`;
+                }
 
             }
             else {
-                document.body.classList.remove("service--open");
-                document.body.classList.add("service--closed");
-                document.getElementById("status").innerHTML = "<h3>Service waiting for you to UNLOCK it</h3>";
+
+
+                if (document.querySelector("lottie-player").getAttribute("speed") !== "0") {
+                    lottie.innerHTML = `<lottie-player src="./6863-tenor.json" background="transparent"  speed="0"  style="width: 300px; height: 300px;"></lottie-player>`;
+                }
+
             }
             const countdown = document.createElement("count-down");
             countdown.setAttribute("data-expiry-date", meta.serviceEndDate);
             document.getElementById("status").appendChild(countdown);
-            document.querySelector("article").setAttribute("data-theme", serviceIsOpen ? "light" : "dark");
+            document.querySelector("html").setAttribute("data-theme", serviceIsOpen ? "light" : "dark");
 
 
-            if (meta.hasMempoolTransaction  === true) {
-             
+            if (meta.hasMempoolTransaction === true) {
+
                 console.log("meta", meta);
                 const mempoolInfo = document.createElement("div");
                 mempoolInfo.innerHTML = "<i>Date might change a bit since we have in mempool transactions</i>";
@@ -98,9 +110,13 @@
                 if (secondsLeft > 0) {
                     this.innerHTML = secondsLeft + " seconds left";
                 }
+                else{
+                    this.innerHTML = "";
+                }
             }
         }
         customElements.define("count-down", Countdown);
+
     </script>
 </body>
 
