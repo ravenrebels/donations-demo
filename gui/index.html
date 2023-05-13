@@ -81,14 +81,14 @@
             document.querySelector("html").setAttribute("data-theme", serviceIsOpen ? "light" : "dark");
 
 
-            if (meta.hasMempoolTransaction === true) {
+     /*       if (meta.hasMempoolTransaction === true) {
 
                 console.log("meta", meta);
                 const mempoolInfo = document.createElement("div");
                 mempoolInfo.innerHTML = "<i>Date might change a bit since we have in mempool transactions</i>";
                 document.getElementById("status").appendChild(mempoolInfo);
 
-            }
+            }*/
         }
         work();
         setInterval(work, 5 * 1000);//Update status every X seconds 
