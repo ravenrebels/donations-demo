@@ -108,7 +108,10 @@
                 const secondsLeft = Math.round((expire.getTime() - now.getTime()) / 1000);
 
                 if (secondsLeft > 0) {
+                  /*
+                  Lets disable the count down, it is confusing for most people when we have a mempool transaction
                     this.innerHTML = secondsLeft + " seconds left";
+                    */
                 }
                 else{
                     this.innerHTML = "";
